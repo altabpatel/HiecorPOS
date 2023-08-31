@@ -1,0 +1,1151 @@
+//
+//  APIServices+Home.swift
+//  HieCOR
+//
+//  Created by Deftsoft on 20/07/18.
+//  Copyright © 2018 Deftsoft. All rights reserved.
+//
+
+import Foundation
+import UIKit
+
+//MARK: Enumeration
+enum HomeAPIServices: APIService {
+    case getTransactionPrintReceiptContent(transactionID: String)
+    case getCategory(pageNumber: Int)
+    case getProduct(categoryName: String, pageNumber: Int)
+    case getSearchProduct(searchText: String, searchFetchLimit: Int, searchPageCount: Int)
+    case updateProductService(parameters: JSONDictionary)
+    case getSearchCategory(searchText: String)
+    case getTaxList()
+    case getCoupanList()
+    case getIngenicoData()
+    case getCustomerList(indexOfPage: Int)
+    case getRegionList(countryName: String?)
+    case getSearchCustomer(searchText: String, searchFetchLimit: Int, searchPageCount: Int)
+    case createOrder(parametersDict: JSONDictionary,isInvoice: Bool)
+    case pushMultipleOrder(parameters: JSONArray)
+    case getRepresentativesList()
+    case sendEmail(parametersDict: JSONDictionary)
+    case sendNote(parametersDict: JSONDictionary)
+    case getReceiptContent(orderId: String)
+    case getReceiptEndDrawerContentURL(orderId: String)
+    case getReceiptEndDrawerDetails(orderId: String)
+    case getCoupanProductIDList(coupan: String)
+    case getPaxDeviceList()
+    case getCountryList(country: String)
+    case getCustomerDetail(id: String)
+    case calculateCart(parametersDict: JSONDictionary)
+    case startDrawer(parametersDict: JSONDictionary)
+    case startPayIn(parametersDict: JSONDictionary)
+    case startPayOut(parametersDict: JSONDictionary)
+    case endDrawer(parametersDict: JSONDictionary)
+    case giftCardBalance(parametersDict: JSONDictionary)
+    case giftCardActivate(parametersDict: JSONDictionary)
+    case giftCardDeactivate(parametersDict: JSONDictionary)
+    case giftCardReplace(parametersDict: JSONDictionary)
+    case giftCardReverse(parametersDict: JSONDictionary)
+    case giftGetBalance(number:String,type:String)
+    case getSetting()
+    case getSavedCardData(id:String,type:String)
+    case getShippingCarrierList()
+    case sendShippingService(parametersDict: JSONDictionary)
+    case deletSavedCardData(id:String,type:String)
+    case updateSavedCardData(parametersDict: JSONDictionary)
+    case getMailingList()
+    case putUserDetail(parametersDict: JSONDictionary)
+    case getUserShippingAddress(UserId : String)
+    case updateUserShippingAddress(parametersDict: JSONDictionary)
+    // for socket sudama
+    case roomApi()
+    //
+    //Path
+    var path: String {
+        var path = ""
+        
+        var isLandscape = false
+        if UIScreen.main.bounds.size.width > UIScreen.main.bounds.size.height {
+            isLandscape = true
+        }
+        
+        switch self {
+        case let .getCategory(pageNumber):
+            if pageNumber == -1 {
+                path = BaseURL.appending(kGetAllCategories)
+            }else {
+                path = BaseURL.appending(kGetCategories + DataManager.userID + "&perpage=\(UI_USER_INTERFACE_IDIOM() == .pad ? (isLandscape ? 30 :18) : 21)&page=\(pageNumber)")
+            }
+            break
+            
+        case let .getProduct(categoryName, pageNumber):
+            if categoryName == "" && pageNumber == -1 {
+                path = BaseURL + kGetAllProducts
+            }else {
+                if (categoryName == "") {
+                    path = BaseURL + kGetTotalProducts + "?perpage=\(isLandscape ? 36 : 45)&page=\(pageNumber)"
+                }
+                else {
+                    path = BaseURL + categoryName + "&perpage=\(isLandscape ? 36 : 45)&page=\(pageNumber)"
+                }
+            }
+            break
+            
+        case let .getSearchProduct(searchText, searchFetchLimit, searchPageCount):
+            path = BaseURL + searchText + "&perpage=\(searchFetchLimit)&page=\(searchPageCount)"
+            break
+            
+        case .updateProductService:
+            path = BaseURL.appending(kUpdateProduct)
+            break
+            
+        case let  .getSearchCategory(searchText):
+            path = String(format: "%@%@%@&key=%@",BaseURL, kGetCategories, DataManager.userID, searchText)
+            break
+            
+        case .getTaxList:
+            path = String(format: "%@%@",BaseURL, kGetTaxList)
+            break
+            
+        case .getMailingList():
+            path = String(format: "%@%@",BaseURL, kMailingList)
+            break
+            
+        case .getCoupanList:
+            path = String(format: "%@%@",BaseURL, kGetCouponsList)
+            break
+            
+        case .getIngenicoData:
+            path = String(format: "%@%@",BaseURL, kGetIngenicoData)
+            break
+            
+        case let .getCustomerList(indexOfPage):
+            if indexOfPage == -1 {
+                path = BaseURL + kGetCustomerList
+            }else {
+                path = BaseURL + kGetCustomerList + "?perpage=30&page=\(indexOfPage)"
+            }
+            break
+            
+        case let .getRegionList(countryName):
+            path = String(format: "%@%@",BaseURL, kGetRegionsList + (countryName == nil ? "" : "?country=\(countryName!)"))
+            break
+            
+        case let .getSearchCustomer(searchText, searchFetchLimit, searchPageCount):
+            path = BaseURL + kGetCustomerList + "?key=\(searchText)&perpage=\(searchFetchLimit)&page=\(searchPageCount)"
+            break
+            
+        case let .createOrder(_,isInvoice):
+            path = String(format: "%@%@",BaseURL,  (isInvoice ? kCreateInvoice : kCreateOrder))
+            break
+            
+        case .pushMultipleOrder:
+            path = String(format: "%@%@",BaseURL,kMultiOrder)
+            break
+            
+        case .getRepresentativesList:
+            path = String(format: "%@%@",BaseURL, kGetRepresentativesList)
+            break
+            
+        case .sendEmail:
+            path = String(format: "%@%@",BaseURL, kSendEmail)
+            break
+            
+        case .sendNote:
+            path = String(format: "%@%@",BaseURL, kOrderAddNote)
+            break
+            
+        case let .getReceiptContent(orderId):
+            path =  String(format: "%@%@%@",BaseURL,kReceiptContent,orderId as CVarArg)
+            break
+            
+        case let .getTransactionPrintReceiptContent(transactionID):
+            path =  String(format: "%@%@%@",BaseURL,kTransactionPrintReceiptContent,transactionID as CVarArg)
+            break
+            
+        case let .getReceiptEndDrawerContentURL(orderId):
+            path =  String(format: "%@%@%@",BaseURL,kReceiptEndDrawerURL,orderId as CVarArg)
+            break
+            
+        case let .getReceiptEndDrawerDetails(orderId):
+            path =  String(format: "%@%@%@",BaseURL,kReceiptEndDrawerDetails,orderId as CVarArg)
+            break
+            
+        case let .getCoupanProductIDList(coupan):
+            path =  String(describing: BaseURL + kGetCouponsList + "?coupon_code=" + coupan)
+            break
+            
+        case let .getCountryList(country):
+            path = BaseURL + kCountryList + (country == "" ? "" : "?country=\(country)")
+            break
+            
+        case let .giftGetBalance(number,type):
+            path = BaseURL + kGiftGetBalance + ("?number=\(number)&type=\(type)")
+            break
+            
+        case .getPaxDeviceList:
+            path = String(format: "%@%@",BaseURL, kPaxSettings)
+            break
+            
+        case let .getCustomerDetail(id):
+            path = BaseURL.appending(kGetUserDetails + "\(id)/")
+            break
+            
+        case .calculateCart:
+            path = BaseURL + kCart
+            break
+            
+        case .startDrawer:
+            path = String(format: "%@%@",BaseURL, kStartDrawer)
+            break
+            
+        case .startPayIn:
+            path = String(format: "%@%@",BaseURL, kStartDrawer)
+            break
+            
+        case .startPayOut:
+            path = String(format: "%@%@",BaseURL, kStartDrawer)
+            break
+            
+        case .endDrawer:
+            path = String(format: "%@%@",BaseURL, kEndDrawer)
+            break
+            
+        case .giftCardBalance:
+            path = String(format: "%@%@",BaseURL, kGiftCardBalance)
+            break
+            
+        case .giftCardActivate:
+            path = String(format: "%@%@",BaseURL, kGiftCardActivate)
+            break
+            
+        case .giftCardDeactivate:
+            path = String(format: "%@%@",BaseURL, kGiftCardDeactivate)
+            break
+            
+        case .giftCardReplace:
+            path = String(format: "%@%@",BaseURL, kGiftCardReplace)
+            break
+            
+        case .giftCardReverse:
+            path = String(format: "%@%@",BaseURL, kGiftCardReverse)
+            break
+            
+        case .getSetting:
+            path = String(format: "%@%@",BaseURL, kSettingsList)
+            break
+	    
+        case let .getSavedCardData(id,_):
+            path = BaseURL.appending(KUserCardId + "\(id)/")
+            break
+            
+        case let .getUserShippingAddress(userId):
+            //path = BaseURL.appending(KUserShippingAddress + "\(userId)/")
+            path = BaseURL.appending(KUserShippingAddress + userId)
+            break
+            
+        case let .deletSavedCardData(id,_):
+            path = BaseURL.appending(KUserCardDeleteId + "\(id)/")
+            break
+	    
+        case .getShippingCarrierList:
+            path = String(format: "%@%@",BaseURL, kShippingCarrier)
+            break
+            
+        case .sendShippingService:
+            path = String(format: "%@%@",BaseURL, kShippingService)
+            break
+
+        case .updateSavedCardData:
+            path = String(format: "%@%@",BaseURL, KUserCardUpdate)
+            
+        case .updateUserShippingAddress:
+            path = String(format: "%@%@",BaseURL, KUpdateShippingAddress)
+            
+        case .putUserDetail:
+            path = String(format: "%@%@",BaseURL, KUserPutDetail)
+            
+        //socket sudama
+        case .roomApi:
+            path = String(format: "%@%@",DataManager.socketAppUrl, kroomApi + "?site_url=\(DataManager.loginBaseUrl)")
+            break
+            //
+            
+        }
+        
+        
+        
+        return path
+    }
+    
+    var multiOrder: MultiOrder {
+        let resource: MultiOrder!
+        let headers = ["Content-Type": "application/json", "X-USERNAME": DataManager.userName, "X-AUTH-KEY": DataManager.authKey, "X-AGENT-ID": DataManager.userID]
+        
+        switch self {
+        case let .pushMultipleOrder(parameters: parameters):
+            resource = MultiOrder(method: .post, parameters: parameters, headers: headers)
+        default:
+            resource = MultiOrder(method: .post, parameters: nil, headers: nil)
+        }
+        return resource
+    }
+    
+    //Resource
+    var resource: Resource {
+        var resource: Resource!
+        let headers = ["Content-Type": "application/json", "X-USERNAME": DataManager.userName, "X-AUTH-KEY": DataManager.authKey, "X-AGENT-ID": DataManager.userID]
+        
+        switch self {
+        case .getCategory:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getProduct:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+
+        case .getSearchProduct:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+        case let .updateProductService(parameters):
+            let header = ["X-USERNAME": DataManager.userName, "X-AUTH-KEY": DataManager.authKey, "X-AGENT-ID": DataManager.userID]
+            resource = Resource(method: .post, parameters: parameters, headers: header)
+            break
+            
+        case .getSearchCategory:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getTaxList:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getMailingList():
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getCoupanList:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getIngenicoData:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .giftGetBalance:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getCustomerList:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+        case .getRegionList:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+        case .getSearchCustomer:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+        case let .createOrder(parametersDict,_):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case .pushMultipleOrder:
+            resource = Resource(method: .post, parameters: nil, headers: headers)
+            break
+        case .getRepresentativesList:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+        case let .sendEmail(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case let .sendNote(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case .getReceiptContent:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getTransactionPrintReceiptContent:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+        case .getReceiptEndDrawerContentURL:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getReceiptEndDrawerDetails:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getCoupanProductIDList:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getCountryList:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+        case .getPaxDeviceList:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+        case .getCustomerDetail:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+        case let .calculateCart(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case let .startDrawer(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case let .startPayIn(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case let .startPayOut(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case let .endDrawer(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case let .giftCardBalance(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case let .giftCardActivate(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case let .giftCardDeactivate(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case let .giftCardReplace(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+        case let .giftCardReverse(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+            
+        case .getSetting:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getSavedCardData:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            
+        case .getUserShippingAddress:
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+	    
+        case .deletSavedCardData:
+            resource = Resource(method: .delete, parameters: nil, headers: headers)
+            break
+            
+        case .getShippingCarrierList():
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+	    
+        case let .sendShippingService(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+            
+        case let .updateSavedCardData(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+            
+        case let .updateUserShippingAddress(parametersDict):
+            resource = Resource(method: .post, parameters: parametersDict, headers: headers)
+            break
+           
+        case let .putUserDetail(parametersDict):
+            resource = Resource(method: .put, parameters: parametersDict, headers: headers)
+            break
+            
+        // socket sudama
+        case let .roomApi():
+            resource = Resource(method: .get, parameters: nil, headers: headers)
+            break
+            //
+        }
+        
+        return resource
+    }
+}
+
+//MARK: Class Functions
+extension APIManager {
+    
+    class func getCategory(pageNumber: Int,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getCategory(pageNumber: pageNumber).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getProduct(categoryName: String, pageNumber: Int,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getProduct(categoryName: categoryName, pageNumber: pageNumber).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getCoupanProductIDList(coupan: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getCoupanProductIDList(coupan: coupan).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getCountryList(country: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getCountryList(country: country).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getSearchProduct(searchText: String, searchFetchLimit: Int, searchPageCount: Int,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getSearchProduct(searchText: searchText, searchFetchLimit: searchFetchLimit, searchPageCount: searchPageCount).request(cancelAllRequests: true,success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func updateProductService(parameters: JSONDictionary, imageDict: [String: Data]?,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.updateProductService(parameters: parameters).uploadMultiple(imageDict: imageDict, success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getSearchCategory(searchText: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getSearchCategory(searchText: searchText).request(cancelAllRequests: true, success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getTaxList(successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getTaxList().request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    class func getMailingList(successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getMailingList().request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getCoupanList(successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getCoupanList().request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getIngenicoData(successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getIngenicoData().request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getCustomerList(indexOfPage: Int, successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getCustomerList(indexOfPage: indexOfPage).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getRegionList(countryName: String?, successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getRegionList(countryName: countryName).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getPaxDeviceList(successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getPaxDeviceList().request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getSetting(successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getSetting().request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getSearchCustomer(searchText: String, searchFetchLimit: Int, searchPageCount: Int,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getSearchCustomer(searchText: searchText, searchFetchLimit: searchFetchLimit, searchPageCount: searchPageCount).request(cancelAllRequests: true, success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getCustomerDetail(id: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getCustomerDetail(id: id).request(cancelAllRequests: false, success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func createOrder(parameters: JSONDictionary,isInvoice: Bool,requestTime: TimeInterval ,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.createOrder(parametersDict: parameters,isInvoice: isInvoice).requestNew(requestTime: requestTime, success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func pushMultipleOrder(parameters: JSONArray,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.pushMultipleOrder(parameters: parameters).requestNew(isMultiOrder: true, success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getRepresentativesList(successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getRepresentativesList().request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func sendEmail(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.sendEmail(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func sendNote(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.sendNote(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getReceiptContent(orderID: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getReceiptContent(orderId: orderID).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    class func getTransactionPrintReceiptContent(transactionID: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getTransactionPrintReceiptContent(transactionID: transactionID).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    class func getReceiptEndDrawerContentURL(orderID: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getReceiptEndDrawerContentURL(orderId: orderID).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getReceiptEndDrawerDetails(orderID: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getReceiptEndDrawerDetails(orderId: orderID).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func calculateCart(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.calculateCart(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    class func startDrawer(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.startDrawer(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func startPayIn(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.startPayIn(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    class func startPayOut(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.startPayOut(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func endDrawer(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.endDrawer(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func giftCardBalance(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.giftCardBalance(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    class func giftCardActivate(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.giftCardActivate(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    class func giftCardDeactivate(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.giftCardDeactivate(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    class func giftCardReplace(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.giftCardReplace(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    class func giftCardReverse(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.giftCardReverse(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func giftGetBalance(number:String,type:String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.giftGetBalance(number: number, type: type).request(cancelAllRequests: true, success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getSavedCardData(id: String,type: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getSavedCardData(id: id, type: type).request(cancelAllRequests: true, success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    class func getUserShippingAddress(UserId: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+
+        HomeAPIServices.getUserShippingAddress(UserId: UserId).request(cancelAllRequests: true, success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+
+    }
+    
+    class func deletSavedCardData(id: String,type: String,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.deletSavedCardData(id: id, type: type).request(cancelAllRequests: true, success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func getShippingCarrierList(successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.getShippingCarrierList().request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func sendShippingService(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.sendShippingService(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+    class func updateSavedCardData(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.updateSavedCardData(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+    }
+    
+    class func updateUserShippingAddress(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.updateUserShippingAddress(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+    }
+    
+    class func putUserDetail(parametersDict: JSONDictionary,successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.putUserDetail(parametersDict: parametersDict).request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    
+      // socket sudama
+    class func roomApi(successCallBack: @escaping JSONDictionaryResponseCallback, failureCallBack: @escaping APIServiceFailureCallback) {
+        
+        HomeAPIServices.roomApi().request(success: { (response) in
+            if let responseDict = response as? JSONDictionary
+            {
+                successCallBack(responseDict)
+            }
+            else
+            {
+                successCallBack([:])
+            }
+        }, failure: failureCallBack)
+        
+    }
+    //
+}

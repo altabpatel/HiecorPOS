@@ -1,0 +1,476 @@
+//
+//  LoginViewController.swift
+//  HieCOR
+//
+//  Created by HyperMacMini on 28/11/17.
+//  Copyright © 2017 HyperMacMini. All rights reserved.
+//
+
+import UIKit
+import Alamofire
+import CoreData
+
+class LoginViewController: BaseViewController {
+    
+    //MARK: IBOutlets
+    @IBOutlet var baseUrlTextField: UITextField!
+    @IBOutlet var usernameTextField: UITextField!
+    @IBOutlet var passwordTextField: UITextField!
+    
+    private var arraySelectedPaymet = [String]()
+    var versionOb = Int()
+    
+    //MARK: Class Life Cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        //Setup TextField
+        baseUrlTextField.delegate = self
+        usernameTextField.delegate = self
+        passwordTextField.delegate = self
+        baseUrlTextField.autocorrectionType = .no
+        baseUrlTextField.autocapitalizationType = .none
+        baseUrlTextField.returnKeyType = .next
+        usernameTextField.returnKeyType = .next
+        passwordTextField.returnKeyType = .done
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.fillUserDetail()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        self.customizeUI()
+    }
+    
+    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+        self.customizeUI()
+    }
+    
+    //MARK: Private Functions
+    private func customizeUI() {
+        //Set Border
+        baseUrlTextField.setBorder()
+        usernameTextField.setBorder()
+        passwordTextField.setBorder()
+        //Set Padding
+        baseUrlTextField.setPadding(with: #imageLiteral(resourceName: "urlicon"))
+        usernameTextField.setPadding(with: #imageLiteral(resourceName: "usericon"))
+        passwordTextField.setPadding(with: #imageLiteral(resourceName: "passwordicon"))
+    }
+    
+    //Fill User Detail
+    private func fillUserDetail() {
+        baseUrlTextField.text = DataManager.loginBaseUrl
+        usernameTextField.text = DataManager.loginUsername
+        passwordTextField.text = DataManager.loginPassword
+    }
+    
+    //Validate Data
+    private func isValidData() -> Bool {
+        if baseUrlTextField.isEmpty {
+            baseUrlTextField.setCustomError(text: "Please enter Base URL.")
+            return false
+        }
+    
+        
+        if usernameTextField.isEmpty {
+            usernameTextField.setCustomError(text: "Please enter User ID.")
+            return false
+        }
+        
+        if passwordTextField.isEmpty {
+            passwordTextField.setCustomError(text: "Please enter Password.")
+            return false
+        }
+        return true
+    }
+    
+    //MARK: IBActions
+    @IBAction func loginButtonAction(_ sender: Any) {
+        self.view.endEditing(true)
+        //Validate Data
+        if !isValidData() {
+            return
+        }
+        ResetAllCartData()
+        self.callAPIToPing()
+    }
+}
+
+//MARK: UITextFieldDelegate
+extension LoginViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.resetCustomError()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+        case baseUrlTextField:
+            textField.resignFirstResponder()
+            usernameTextField.becomeFirstResponder()
+            break
+        case usernameTextField:
+            textField.resignFirstResponder()
+            passwordTextField.becomeFirstResponder()
+            break
+        case passwordTextField:
+            textField.resignFirstResponder()
+            //Validate Data
+            if self.isValidData() {
+                self.callAPIToPing()
+            }
+            break
+        default: break
+        }
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if string.contains(UIPasteboard.general.string ?? "") && string.containEmoji {
+            return false
+        }
+        if range.location == 0 && string == " " {
+            return false
+        }
+        return textField == baseUrlTextField ? string != " " : true
+    }
+}
+
+//MARK: API Methods
+extension LoginViewController {
+    
+    func callAPIToPing() {
+        //Update Base URL
+        if self.baseUrlTextField.text!.contains("https://")
+        {
+            BaseURL = self.baseUrlTextField.text!
+        }
+        else
+        {
+            BaseURL = "https://" + self.baseUrlTextField.text!
+        }
+        //
+        LoginVM.shared.ping { (success, message, error) in
+            if success == 1 {
+                var parameters = JSONDictionary()
+                parameters[APIKeys.kUsername] = self.usernameTextField.text!
+                parameters[APIKeys.kPassword] = self.passwordTextField.text!
+                //Call API
+                self.callAPIToLogin(parameters: parameters)
+            }else {
+                if message != nil {
+//                    self.showAlert(message: message)
+                    appDelegate.showToast(message: message!)
+                }else {
+                    self.showErrorMessage(error: error)
+                }
+            }
+        }
+    }
+    
+    func callAPIToLogin(parameters: JSONDictionary) {
+        LoginVM.shared.login(parametersDict: parameters) { (success, message, error) in
+            if success == 1 {
+                self.CheckCRMSettings()
+                //Update Data Manager
+                DataManager.loginBaseUrl = self.baseUrlTextField.text!
+                DataManager.loginUsername = self.usernameTextField.text!
+                DataManager.loginPassword = self.passwordTextField.text!
+                DataManager.isUserLogin = true
+                DataManager.receipt = true
+                DataManager.isFirstTimeUserLogin = true
+                DataManager.isBalanceDueData = false
+                HomeVM.shared.tipValue = 0.0
+                HomeVM.shared.amountPaid = 0.0
+                HomeVM.shared.DueShared = 0.0
+                self.versionOb = Int(DataManager.appVersion)!
+                if BaseURL != DataManager.BaseUrlData {
+                    DataManager.BaseUrlData = BaseURL
+                    DataManager.isCardReader = false
+                    self.SettingListDataValue()
+                    DataManager.isTaxOn = true
+                    DataManager.isGooglePrinter = true
+                    DataManager.isCustomerManagementOn = true
+                    DataManager.isPromptAddCustomer = false
+                    DataManager.isDrawerOpen = false
+                } else {
+                    self.setRootViewControllerForIphone()
+                }
+           
+                
+                
+            }else {
+                if message != nil {
+//                    self.showAlert(message: message)
+                    appDelegate.showToast(message: message!)
+                }else {
+                    self.showErrorMessage(error: error)
+                }
+            }                          
+        }
+    }
+    
+    func CheckCRMSettings() {
+        if self.baseUrlTextField.text != DataManager.loginBaseUrl {
+            //Reset Settings
+            DataManager.isTaxOn = false
+            DataManager.isCustomerManagementOn = false
+            DataManager.isPromptAddCustomer = false
+            DataManager.selectedPayment = nil
+            DataManager.selectedPAX = ["CREDIT"]
+            DataManager.signature = false
+            DataManager.tempSignature = false
+            DataManager.receipt = false
+            DataManager.pinloginEveryTransaction = false
+            DataManager.deviceName = false
+            DataManager.deviceNameText = nil
+            DataManager.cardReaders = false
+            DataManager.isGiftCard = false
+            DataManager.isInternalGift = false
+            DataManager.isSingatureOnEMV = false
+            DataManager.isPaxPayGiftCard = false
+            
+            DataManager.printers = false
+            DataManager.isBarCodeReaderOn = false
+            DataManager.collectTips = false
+            DataManager.tempCollectTips = false
+            DataManager.isAuthentication = false
+            DataManager.isCouponList = false
+            DataManager.isShowCountry = false
+            DataManager.isBluetoothPrinter = false
+            DataManager.isGooglePrinter = false
+            DataManager.selectedCountry = "US"
+            DataManager.isSplitRow = false
+            DataManager.isDiscountOptions = false
+            DataManager.tenDiscountValue = 10
+            DataManager.twentyDiscountValue = 20
+            DataManager.seventyDiscountValue = 70
+            DataManager.isLineItemTaxExempt = false
+            DataManager.isProductEdit = false
+            DataManager.isSwipeToPay = false
+        }
+    }
+    
+}
+
+//MARK: API Methods
+extension LoginViewController {
+    
+    func SettingListDataValue() {
+        HomeVM.shared.getSetting(responseCallBack: { (success, message, error) in
+            Indicator.sharedInstance.hideIndicator()
+            if success == 1 {
+                
+                print("succes value in data")
+                
+                for data in HomeVM.shared.settingList {
+                    
+                    let keyData = data.settingKey
+                    let valueData = data.settingValue
+                    //let option = data.settingOption
+                    
+                    switch keyData {
+                        
+                    case "pos_enablededitproduct":
+                        if valueData == "true" {
+                            DataManager.isProductEdit = true
+                        } else {
+                            DataManager.isProductEdit = false
+                        }
+                        
+                    case "pos_giftcard_functionality":
+                        if valueData == "true" {
+                            DataManager.isGiftCard = true
+                            self.arraySelectedPaymet.append("GIFT CARD")
+                            
+                        } else {
+                            DataManager.isGiftCard = false
+                        }
+                        
+                    case "pos_external_gift_certifcates_functionality":
+                        if valueData == "true" {
+                            self.arraySelectedPaymet.append("EXTERNAL GIFT CARD")
+                        }
+                        
+                    case "pos_pax_gift_card_functionality":
+                        if valueData == "true" {
+                            DataManager.selectedPAX.append("GIFT")
+                            DataManager.isPaxPayGiftCard = true
+                        } else {
+                            DataManager.isPaxPayGiftCard = false
+                        }
+                        
+                    case "pos_external_functionality":
+                        if valueData == "true" {
+                            self.arraySelectedPaymet.append("EXTERNAL")
+                        }
+                        
+                    case "pos_internal_gift":
+                        
+                        if valueData == "true" {
+                            DataManager.isInternalGift = true
+                            self.arraySelectedPaymet.append("INTERNAL GIFT CARD")
+                        } else {
+                            DataManager.isInternalGift = false
+                        }
+                        
+                    case "pos_pax_debit_card_functionality":
+                        if valueData == "true" {
+                            DataManager.selectedPAX.append("DEBIT")
+                        }
+                        
+                    case "pos_pax_functionality":
+                        if valueData == "true" {
+                            self.arraySelectedPaymet.append("PAX PAY")
+                        }
+                        
+                    case "pos_multi_card_functionality":
+                        if valueData == "true" {
+                            if self.versionOb > 3 {
+                                self.arraySelectedPaymet.append("MULTI CARD")
+                            }
+                        }
+                        
+                    case "pos_invoice_functionality":
+                        if valueData == "true" {
+                            self.arraySelectedPaymet.append("INVOICE")
+                        }
+                        
+                    case "pos_check_functionality":
+                        if valueData == "true" {
+                            self.arraySelectedPaymet.append("ACH CHECK")
+                        }
+                        
+                    case "pos_paper_check_functionality":
+                        if valueData == "true" {
+                            self.arraySelectedPaymet.append("CHECK")
+                        }
+                        
+                    case "pos_credit_functionality":
+                        if valueData == "true" {
+                            self.arraySelectedPaymet.append("CREDIT")
+                        }
+                        
+                    case "pos_cash_functionality":
+                        if valueData == "true" {
+                            self.arraySelectedPaymet.append("CASH")
+                        }
+                        
+                    case "pos_coupon_list_functionality":
+                        if valueData == "true" {
+                            DataManager.isCouponList = true
+                        } else {
+                            DataManager.isCouponList = false
+                        }
+                        
+                    case "pos_enable_access_functionality":
+                        if valueData == "true" {
+                            DataManager.pinloginEveryTransaction = true
+                        } else {
+                            DataManager.pinloginEveryTransaction = false
+                        }
+                        
+                    case "pos_tip_functionality":
+                        if valueData == "true" {
+                            DataManager.collectTips = true
+                        } else {
+                            DataManager.collectTips = false
+                        }
+                        
+                    case "pos_auth_functionality":
+                        if valueData == "true" {
+                            DataManager.isAuthentication = true
+                        } else {
+                            DataManager.isAuthentication = false
+                        }
+                        
+                    case "pos_cart_functionality":
+                        if valueData == "true" {
+                            DataManager.isSplitRow = true
+                        } else {
+                            DataManager.isSplitRow = false
+                        }
+                        
+                    case "pos_discount_percentage_functionality":
+                        if valueData == "true" {
+                            DataManager.isDiscountOptions = true
+                        } else {
+                            DataManager.isDiscountOptions = false
+                        }
+                        
+                    case "pos_tax_exempt_functionality":
+                        if valueData == "true" {
+                            DataManager.isLineItemTaxExempt = true
+                        } else {
+                            DataManager.isLineItemTaxExempt = false
+                        }
+                        
+                    case "signatureline_status":
+                        if valueData == "true" {
+                            DataManager.signatureOnReceipt = true
+                        } else {
+                            DataManager.signatureOnReceipt = false
+                        }
+                        
+                    case "pos_signature_functionality":
+                        if valueData == "true" {
+                            DataManager.signature = true
+                        } else {
+                            DataManager.signature = false
+                        }
+                        
+                    case "pax_signature_functionality":
+                        if valueData == "true" {
+                            DataManager.isSingatureOnEMV = true
+                        } else {
+                            DataManager.isSingatureOnEMV = false
+                        }
+                        
+                    case "pos_line_item_discount":
+                        
+                        let arr = valueData!.components(separatedBy: ",")
+                        for i in 0..<arr.count {
+                            if i == 0 {
+                                DataManager.tenDiscountValue = arr[i].toDouble() ?? 0.0
+                            } else if i == 1 {
+                                DataManager.twentyDiscountValue = arr[i].toDouble() ?? 0.0
+                            } else if i == 2 {
+                                DataManager.seventyDiscountValue = arr[i].toDouble() ?? 0.0
+                            }
+                        }
+                        
+                    // socket sudama
+                    case "socket_app_url":
+                        if valueData != "" || valueData != "NULL" {
+                            DataManager.socketAppUrl = valueData!
+                        } //
+                        
+                    default: break
+                        
+                    }
+                    
+                }
+                
+                DataManager.selectedPayment = self.arraySelectedPaymet
+                
+                self.setRootViewControllerForIphone()
+            }
+            else {
+                if message != nil {
+//                    self.showAlert(message: message!)
+                    appDelegate.showToast(message: message!)
+                }else {
+                    self.showErrorMessage(error: error)
+                }
+            }
+        })
+    }
+    
+}

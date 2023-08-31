@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "BC17557E-BE0F-4B31-B9C6-B722C3AD5342"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "12A0F4B5-7816-4D29-AE82-93B42BBF265F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HieCOR/View Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "6811"
+            endingLineNumber = "6811"
+            landmarkName = "didvariationPrizeAtrribute(cartArray:index:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "12A0F4B5-7816-4D29-AE82-93B42BBF265F - 2b0269a4e4f10fc6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6811"
+                  endingLineNumber = "6811"
+                  offsetFromSymbolStart = "1152">
+               </Location>
+               <Location
+                  uuid = "12A0F4B5-7816-4D29-AE82-93B42BBF265F - 2b0269a4e4f10fc6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6811"
+                  endingLineNumber = "6811"
+                  offsetFromSymbolStart = "1620">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "148DB6E2-0917-4DEA-96FA-74FE77305DB9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HieCOR/View Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "6833"
+            endingLineNumber = "6833"
+            landmarkName = "didvariationPrizeAtrribute(cartArray:index:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "148DB6E2-0917-4DEA-96FA-74FE77305DB9 - 2b0269a4e4f102fc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6833"
+                  endingLineNumber = "6833"
+                  offsetFromSymbolStart = "3348">
+               </Location>
+               <Location
+                  uuid = "148DB6E2-0917-4DEA-96FA-74FE77305DB9 - 2b0269a4e4f102fc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6833"
+                  endingLineNumber = "6833"
+                  offsetFromSymbolStart = "3852">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4B7E9193-B8FE-4439-9C62-66A44D3FF201"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HieCOR/View Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "6944"
+            endingLineNumber = "6944"
+            landmarkName = "didvariationPrizeAtrribute(cartArray:index:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "4B7E9193-B8FE-4439-9C62-66A44D3FF201 - 2b0269a4e4f110a3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6944"
+                  endingLineNumber = "6944"
+                  offsetFromSymbolStart = "16152">
+               </Location>
+               <Location
+                  uuid = "4B7E9193-B8FE-4439-9C62-66A44D3FF201 - 2b0269a4e4f110a3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6944"
+                  endingLineNumber = "6944"
+                  offsetFromSymbolStart = "16656">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "93AB7506-BED1-4D7D-89B0-8F6B37BD1823"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HieCOR/View Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "6970"
+            endingLineNumber = "6970"
+            landmarkName = "didvariationPrizeAtrribute(cartArray:index:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "93AB7506-BED1-4D7D-89B0-8F6B37BD1823 - 2b0269a4e4f11345"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6970"
+                  endingLineNumber = "6970"
+                  offsetFromSymbolStart = "19548">
+               </Location>
+               <Location
+                  uuid = "93AB7506-BED1-4D7D-89B0-8F6B37BD1823 - 2b0269a4e4f11345"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6970"
+                  endingLineNumber = "6970"
+                  offsetFromSymbolStart = "19780">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "44BBD3F4-3B05-4319-8CFA-59867575BC22"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HieCOR/View Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "6982"
+            endingLineNumber = "6982"
+            landmarkName = "didvariationPrizeAtrribute(cartArray:index:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "44BBD3F4-3B05-4319-8CFA-59867575BC22 - 2b0269a4e4f115c9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6982"
+                  endingLineNumber = "6982"
+                  offsetFromSymbolStart = "21516">
+               </Location>
+               <Location
+                  uuid = "44BBD3F4-3B05-4319-8CFA-59867575BC22 - 2b0269a4e4f115c9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6982"
+                  endingLineNumber = "6982"
+                  offsetFromSymbolStart = "21748">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3ADA4C2C-0FAF-4956-B4A0-CA766FAA277B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HieCOR/View Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "6972"
+            endingLineNumber = "6972"
+            landmarkName = "didvariationPrizeAtrribute(cartArray:index:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3ADA4C2C-0FAF-4956-B4A0-CA766FAA277B - 2b0269a4e4f11307"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6972"
+                  endingLineNumber = "6972"
+                  offsetFromSymbolStart = "19912">
+               </Location>
+               <Location
+                  uuid = "3ADA4C2C-0FAF-4956-B4A0-CA766FAA277B - 2b0269a4e4f11307"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.didvariationPrizeAtrribute(cartArray: Swift.Array&lt;Any&gt;, index: Swift.Int) -&gt; Swift.Double"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "6972"
+                  endingLineNumber = "6972"
+                  offsetFromSymbolStart = "20452">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4365FC5B-00FA-4F09-A419-8B8BC510E598"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HieCOR/View Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3954"
+            endingLineNumber = "3954"
+            landmarkName = "tableView(_:cellForRowAt:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "4365FC5B-00FA-4F09-A419-8B8BC510E598 - 2abe894f6f241448"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.tableView(_: __C.UITableView, cellForRowAt: Foundation.IndexPath) -&gt; __C.UITableViewCell"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "3954"
+                  endingLineNumber = "3954"
+                  offsetFromSymbolStart = "2992">
+               </Location>
+               <Location
+                  uuid = "4365FC5B-00FA-4F09-A419-8B8BC510E598 - 2abe894f6f241448"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HieCOR.CartContainerViewController.tableView(_: __C.UITableView, cellForRowAt: Foundation.IndexPath) -&gt; __C.UITableViewCell"
+                  moduleName = "HieCOR"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiecorsoftware/Downloads/hiecor-pos-app-ios-v4_AllCode/HieCOR/View%20Controllers/Home/Containers/Cart/CartContainerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "3954"
+                  endingLineNumber = "3954"
+                  offsetFromSymbolStart = "3352">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

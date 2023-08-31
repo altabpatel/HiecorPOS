@@ -1,0 +1,127 @@
+PODS:
+  - Alamofire (4.4.0)
+  - Crashlytics (3.10.9):
+    - Fabric (~> 1.7.13)
+  - EAIntroView (2.12.0):
+    - EARestrictedScrollView (~> 1.1.0)
+  - EARestrictedScrollView (1.1.0)
+  - Fabric (1.7.13)
+  - Firebase/Core (5.10.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics (= 5.2.0)
+  - Firebase/CoreOnly (5.10.0):
+    - FirebaseCore (= 5.1.5)
+  - FirebaseAnalytics (5.2.0):
+    - FirebaseCore (~> 5.1)
+    - FirebaseInstanceID (~> 3.2)
+    - GoogleAppMeasurement (~> 5.2)
+    - GoogleUtilities/AppDelegateSwizzler (~> 5.2)
+    - GoogleUtilities/MethodSwizzler (~> 5.2)
+    - GoogleUtilities/Network (~> 5.2)
+    - "GoogleUtilities/NSData+zlib (~> 5.2)"
+    - nanopb (~> 0.3)
+  - FirebaseCore (5.1.5):
+    - GoogleUtilities/Logger (~> 5.2)
+  - FirebaseInstanceID (3.2.2):
+    - FirebaseCore (~> 5.1)
+    - GoogleUtilities/Environment (~> 5.3)
+    - GoogleUtilities/UserDefaults (~> 5.3)
+  - GoogleAppMeasurement (5.2.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 5.2)
+    - GoogleUtilities/MethodSwizzler (~> 5.2)
+    - GoogleUtilities/Network (~> 5.2)
+    - "GoogleUtilities/NSData+zlib (~> 5.2)"
+    - nanopb (~> 0.3)
+  - GoogleUtilities/AppDelegateSwizzler (5.3.0):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+  - GoogleUtilities/Environment (5.3.0)
+  - GoogleUtilities/Logger (5.3.0):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (5.3.0):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/Network (5.3.0):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (5.3.0)"
+  - GoogleUtilities/Reachability (5.3.0):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/UserDefaults (5.3.0):
+    - GoogleUtilities/Logger
+  - IQKeyboardManagerSwift (6.2.0)
+  - Kingfisher (4.10.0)
+  - nanopb (0.3.8):
+    - nanopb/decode (= 0.3.8)
+    - nanopb/encode (= 0.3.8)
+  - nanopb/decode (0.3.8)
+  - nanopb/encode (0.3.8)
+  - SMCloudServices (1.5.1):
+    - StarIO_Extension
+  - Socket.IO-Client-Swift (15.2.0):
+    - Starscream (~> 3.1)
+  - StarIO (2.8.2)
+  - StarIO_Extension (1.15.0):
+    - StarIO
+  - Starscream (3.1.1)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.4.0)
+  - Crashlytics
+  - EAIntroView
+  - Fabric
+  - Firebase/Core
+  - IQKeyboardManagerSwift
+  - Kingfisher (~> 4.10.0)
+  - SMCloudServices (= 1.5.1)
+  - Socket.IO-Client-Swift (~> 15.2.0)
+  - StarIO (= 2.8.2)
+  - StarIO_Extension (= 1.15.0)
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - Crashlytics
+    - EAIntroView
+    - EARestrictedScrollView
+    - Fabric
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseCore
+    - FirebaseInstanceID
+    - GoogleAppMeasurement
+    - GoogleUtilities
+    - IQKeyboardManagerSwift
+    - Kingfisher
+    - nanopb
+    - SMCloudServices
+    - Socket.IO-Client-Swift
+    - StarIO
+    - StarIO_Extension
+    - Starscream
+
+SPEC CHECKSUMS:
+  Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
+  Crashlytics: f836e1d564b4492da572b056ce7ea0476c53ec4b
+  EAIntroView: 249559079ddfdbe80e5bcb755c04c3b964b2ac27
+  EARestrictedScrollView: b0c2a3f92fb2610bb44d71c5e4893777c89e45ef
+  Fabric: e88a14d80173bcf3db4eac866c83619f2894183d
+  Firebase: 6691d47562a780c26281ce8464518faafc90c610
+  FirebaseAnalytics: 831f1f127f4a75698e9875a87bf7e2668730d953
+  FirebaseCore: c6079de64c1a87000e52e9b408dddcadc901177f
+  FirebaseInstanceID: 78ba376fcd5b94c001f9999b2cbd3d1f1e56e78d
+  GoogleAppMeasurement: 2b3a023a61239c8d002e6e4fcf4abce8eddce0e0
+  GoogleUtilities: 760ccb53b7c7f40f9c02d8c241f76f841a7a6162
+  IQKeyboardManagerSwift: b07ccf9d8cafe993dcd6cb794eb4ba34611a0c4e
+  Kingfisher: 43c4b802d8b5256cf1f4379e9cd10b329be6d3e2
+  nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
+  SMCloudServices: d31c07b85289d68db7d0ada0b91fb5a1c078e694
+  Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
+  StarIO: e1d416e563e34fd77f94de779913618f6aac8972
+  StarIO_Extension: 0484b9f19869e29f6e875060a543243f14153ba4
+  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
+
+PODFILE CHECKSUM: fb59b2649671b5b52513c94baef01ed899ac35a1
+
+COCOAPODS: 1.10.1

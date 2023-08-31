@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>703810694570-au8u79bcsi63mc8tr23lm7th9l2h6c5u.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.703810694570-au8u79bcsi63mc8tr23lm7th9l2h6c5u</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDfH1ahuWoez3X4jldvaUJbJieweDWSoWw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>703810694570</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.betasoft.hiecor</string>
+	<key>PROJECT_ID</key>
+	<string>hiecorandroid</string>
+	<key>STORAGE_BUCKET</key>
+	<string>hiecorandroid.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<true/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:703810694570:ios:612a2515734d870d344fd3</string>
+	<key>DATABASE_URL</key>
+	<string>https://hiecorandroid.firebaseio.com</string>
+</dict>
+</plist>

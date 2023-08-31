@@ -1,0 +1,723 @@
+//
+//  BaseVC.swift
+//  HieCOR
+//
+//  Created by Deftsoft on 17/07/18.
+//  Copyright © 2018 Deftsoft. All rights reserved.
+//
+
+
+import UIKit
+
+protocol SeetingControllerDelegate:class {
+    func reloadTableViewForIngenicoCheckBox()
+}
+
+class BaseViewController: UIViewController, RUADeviceStatusHandler, DeviceManagementDelegate {
+    
+    //MARK: - RUADeviceStatus Implementation
+    func onConnected()  {
+        print("Devices Connected")
+        setDeviceConneced(true)
+        DataManager.isIngenicoConnected = true
+        //appDelegate.showToast(message: "Device Connected")
+        //IMSBaseViewController.currentVC.deviceStatusBarButton?.customView = getDeviceStatusImage()
+        DeviceManagementHelper.shared.stopScan()
+        checkFirmwareUpdate()
+        if(connectingDevice != nil && connectingDevice?.communicationInterface == RUACommunicationInterfaceBluetooth) {
+            DeviceManagementHelper.shared.saveDevice(device: connectingDevice!, ofType: (Ingenico.sharedInstance()?.paymentDevice.getType())!)
+        }
+        
+        delegateCall?.reloadTableViewForIngenicoCheckBox()
+        
+    }
+    
+    func onDisconnected() {
+        setDeviceConneced(false)
+        DataManager.isIngenicoConnected = false
+        print("Devices Disconnected")
+        //IMSBaseViewController.currentVC.deviceStatusBarButton?.customView = getDeviceStatusImage()
+        connectingDevice = nil
+        DeviceManagementHelper.shared.startScan()
+        delegateCall?.reloadTableViewForIngenicoCheckBox()
+    }
+    
+    func onError(_ message:String)  {
+        //print("An error occured \(message)")
+        //IMSBaseViewController.currentVC.deviceStatusBarButton?.customView = getDeviceStatusImage()
+        connectingDevice = nil
+        DeviceManagementHelper.shared.startScan()
+    }
+    
+    func connectPairedDevice(device: RUADevice, ofType deviceType: RUADeviceType) {
+        if (!getIsDeviceConnected()) {
+            Ingenico.sharedInstance()?.paymentDevice.setDeviceType(deviceType)
+            Ingenico.sharedInstance()?.paymentDevice.select(device)
+            Ingenico.sharedInstance()?.paymentDevice.initialize(self)
+            
+        }
+    }
+    
+    func setLoggedIn(_ loggedIn:Bool){
+        BaseViewController.isLoggedIn=loggedIn
+    }
+    
+    func setDeviceConneced(_ deviceConnected:Bool){
+        BaseViewController.isDeviceConnected=deviceConnected
+    }
+    
+    func getIsLoggedIn() -> Bool{
+        return BaseViewController.isLoggedIn
+    }
+    
+    func getIsDeviceConnected() -> Bool{
+        return BaseViewController.isDeviceConnected
+    }
+    
+    func getLastTransactionType() -> IMSTransactionType?{
+        return BaseViewController.lastTransactionType
+    }
+    
+    func setLastTransactionType(_ type:IMSTransactionType){
+        BaseViewController.lastTransactionType = type
+    }
+    
+    func setLastTransactionID(_ id:String)  {
+        BaseViewController.lastTransactionID=id
+    }
+    
+    func getLastTransactionID() -> String? {
+        return BaseViewController.lastTransactionID
+    }
+    
+    func getResponseCodeString(_ code:Int) -> String {
+        print("responce code data 11")
+        let responseCode:IMSResponseCode = IMSResponseCode(rawValue: UInt(code))!
+        switch (responseCode) {
+        case .Success:
+            return "Success";
+        case .PaymentDeviceNotAvailable:
+            return "Payment Device Not Available";
+        case .PaymentDeviceError:
+            return "Payment Device Not Error";
+        case .PaymentDeviceTimeout:
+            return "Payment Device Timeouts";
+        case .NotSupportedByPaymentDevice:
+            return "Not Supported by Payment Device";
+        case .CardBlocked:
+            return "Card Blocked";
+        case .ApplicationBlocked:
+            return "Application Blocked";
+        case .InvalidCard:
+            return "Invalid Card";
+        case .InvalidApplication:
+            return "Invalid Card Application";
+        case .TransactionCancelled:
+            return "Transaction Cancelled";
+        case .CardReaderGeneralError:
+            return "Card Reader General Error";
+        case .CardInterfaceGeneralError:
+            return "Card Not Accepted";
+        case .BatteryTooLowError:
+            return "Battery Too Low";
+        case .BadCardSwipe:
+            return "Bad Card Swipe";
+        case .TransactionDeclined:
+            return "Transaction Declined";
+        case .TransactionReversalCardRemovedFailed:
+            return "Transaction Reversal Card Removed Failed";
+        case .TransactionReversalCardRemovedSuccess:
+            return "Transaction Reversal Card Removed Success";
+        case .TransactionReversalChipDeclineFailed:
+            return "Transaction Reversal Chip Decline  Failed";
+        case .TransactionReversalChipDeclineSuccess:
+            return "Transaction Reversal Chip Decline Success";
+        case .TransactionRefusedBecauseOfTransactionWithPendingSignature:
+            return "Transaction Refused Because Of Transaction With Pending Signature";
+        case .UserNameValidationError:
+            return "UserName Validation Error";
+        case .NetworkError:
+            return "Network Error";
+        default:
+            return String(format: "response Code:\(responseCode.rawValue)")
+        }
+    }
+    
+    func checkFirmwareUpdate(){
+        if getIsLoggedIn() && getIsDeviceConnected() {
+            Ingenico.sharedInstance()?.paymentDevice.checkFirmwareUpdate({ (error, updateAction, firmwareInfo) in
+                print("Firmware Update: \(updateAction)")
+                Indicator.sharedInstance.hideIndicator()
+                //SVProgressHUD.dismiss()
+                if (error != nil) {
+                    //SVProgressHUD.showError(withStatus: "Check firmware update failed")
+                    //appDelegate.showToast(message: "Check firmware update failed")
+                    Indicator.sharedInstance.hideIndicator()
+                    return
+                }
+                else if(updateAction == .FirmwareUpdateActionRequired || updateAction == .FirmwareUpdateActionOptional) {
+                    
+                    let alert = UIAlertController(title: "Firmware Update", message: "Firmware update is \(updateAction == .FirmwareUpdateActionRequired ? "required":"optional")", preferredStyle: .alert)
+                    let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
+                        if (updateAction == .FirmwareUpdateActionOptional) {
+                            self.checkDeviceSetup()
+                        }
+                    })
+                    let update = UIAlertAction(title: "Update", style: .default, handler: { (action) in
+                        //SVProgressHUD.show(withStatus: "Downloading firmware...")
+                        appDelegate.showToast(message: "Downloading firmware...")
+                        Ingenico.sharedInstance()?.paymentDevice.updateFirmware(downloadProgress: { (downloaded, total) in
+                            //SVProgressHUD.showProgress(Float(downloaded/total), status: "Downloading firmware...")
+                            appDelegate.showToast(message: "Downloading firmware...")
+                        }, andFirmwareUpdateProgress: { (current, total) in
+                            let progress = Float(current)/Float(total)
+                            //SVProgressHUD.showProgress(progress, status: "Updating firmware...")
+                            appDelegate.showToast(message: "Updating firmware..")
+                        }, andOnDone: { (error) in
+                            //SVProgressHUD.dismiss()
+                            if error == nil {
+                                appDelegate.showToast(message: "Firmware update succeeded")
+                                //SVProgressHUD.showSuccess(withStatus: "Firmware update succeeded")
+                            }
+                            else {
+                                appDelegate.showToast(message: "Firmware update failed")
+                                //SVProgressHUD.showError(withStatus: "Firmware update failed")
+                            }
+                         })
+                    })
+                    alert.addAction(update)
+                    alert.addAction(cancel)
+                    self.present(alert, animated: true, completion: nil)
+                }
+                else {
+                    Indicator.sharedInstance.hideIndicator()
+                    self.checkDeviceSetup()
+                }
+            })
+        }
+    }
+    
+    func checkDeviceSetup() {
+        //SVProgressHUD.dismiss()
+        
+        if getIsLoggedIn() && getIsDeviceConnected() {
+            Ingenico.sharedInstance()?.paymentDevice.checkSetup({ (error, isSetupRequired) in
+                        if error != nil {
+                            Indicator.sharedInstance.hideIndicator()
+                            //SVProgressHUD.showError(withStatus: "Check device setup failed")
+                        }
+                        else if isSetupRequired {
+                            
+            //                Ingenico.sharedInstance()?.paymentDevice.setup(progressHandler: { (current, total) in
+            //                    let progress = Float(current)/Float(total)
+            //                    Indicator.sharedInstance.showIndicator()
+            //                    //SVProgressHUD.showProgress(progress, status: "Setting up device...")
+            //                }, andOnDone: { (error) in
+            //                    //SVProgressHUD.dismiss()
+            //                    if error == nil {
+            //                        Indicator.sharedInstance.hideIndicator()
+            //                        //let settingController = SettingsViewController()
+            //                        //settingController.tbl_Settings.reloadData()
+            //                        //SVProgressHUD.showSuccess(withStatus: "Device setup succeeded")
+            //                    }
+            //                    else {
+            //                        //SVProgressHUD.showError(withStatus: "Device setup failed")
+            //                    }
+            //                })
+                            Indicator.sharedInstance.hideIndicator()
+                            let alert = UIAlertController(title: "Device Setup", message: "Device setup is required", preferredStyle: .alert)
+                            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler:nil)
+                            let update = UIAlertAction(title: "Setup", style: .default, handler: { (action) in
+                                //SVProgressHUD.show(withStatus: "Setting up device...")
+                                appDelegate.showToast(message: "Setting up device...")
+                                Ingenico.sharedInstance()?.paymentDevice.setup(progressHandler: { (current, total) in
+                                    let progress = Float(current)/Float(total)
+                                    Indicator.sharedInstance.showIndicator()
+                                    //appDelegate.showToast(message: "Setting up device...")
+                                    //SVProgressHUD.showProgress(progress, status: "Setting up device...")
+                                }, andOnDone: { (error) in
+                                    //SVProgressHUD.dismiss()
+                                    if error == nil {
+                                        Indicator.sharedInstance.hideIndicator()
+                                        appDelegate.showToast(message: "Device setup succeeded")
+                                        self.delegateCall?.reloadTableViewForIngenicoCheckBox()
+                                        //SVProgressHUD.showSuccess(withStatus: "Device setup succeeded")
+                                    }
+                                    else {
+                                        appDelegate.showToast(message: "Device setup failed")
+                                         self.delegateCall?.reloadTableViewForIngenicoCheckBox()
+                                        //SVProgressHUD.showError(withStatus: "Device setup failed")
+                                    }
+                                })
+                            })
+                            alert.addAction(update)
+                            //alert.addAction(cancel)
+                            self.present(alert, animated: true, completion: nil)
+                        }
+                    })
+        } else {
+            appDelegate.showToast(message: "Initial Device setup failed")
+        }
+        
+    }
+    
+    func consoleLog (_ data:String){
+        let formatter:DateFormatter = DateFormatter.init()
+        formatter.dateFormat = "HH:mm:ss"
+        let dateStr:String = formatter.string(from: Date())
+       // (self.tabBarController as! TabBarViewController).logString.append("[\(dateStr)]:\(data)\n")
+    }
+    
+    //MARK:  Variables
+    var pickerView = UIPickerView()
+    var datePickerView = UIDatePicker()
+    var pickerTextfield : UITextField!
+    var pickerDelegate: HieCORPickerDelegate?
+    var pickerArray = [String]()
+    var pickervalueChanged = false
+    var onSelectionCallback: ((String) -> ())? = nil
+    var isCountrySelected = false
+    var recentTextField: UITextField?
+    var recentUIVIewController: UIViewController? = nil
+    
+    static var isDeviceConnected :Bool = false
+    static var currentVC:BaseViewController!
+    var connectingDevice : RUADevice?
+    static var isLoggedIn:Bool = false
+    static var lastTransactionType:IMSTransactionType?
+    static var lastTransactionID:String?
+    weak var delegateCall: SeetingControllerDelegate?
+    
+    //Transition
+    var transition: CATransition {
+        let transition = CATransition()
+        transition.type = kCATransitionFade
+        transition.duration = 0.2
+        return transition
+    }
+    
+    
+    //MARK: Class Life Cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        BaseViewController.currentVC=self;
+       // IMSBaseViewController.currentVC.deviceStatusBarButton?.customView = getDeviceStatusImage()
+        DeviceManagementHelper.shared.delegate = self
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        debugPrint("********** MEMORY WARNING **********")
+        URLCache.shared.removeAllCachedResponses()
+        URLCache.shared.diskCapacity = 0
+        URLCache.shared.memoryCapacity = 0
+    }
+}
+
+//MARK: Set Data Pickers DataSource and Delegate Methods
+extension BaseViewController: UIPickerViewDelegate , UIPickerViewDataSource {
+    
+    func setPickerView(textField: UITextField, array: [String]) {
+        pickerView = UIPickerView()
+        pickerView.delegate = self
+        pickerView.dataSource = self
+        pickerArray = array
+        pickerTextfield = textField
+        pickervalueChanged = false
+        
+        let toolBar = UIToolbar()
+        toolBar.barStyle = .default
+        toolBar.isTranslucent = true
+        toolBar.tintColor = UIColor(red: 92/255, green: 216/255, blue: 255/255, alpha: 1)
+        toolBar.sizeToFit()
+        
+        let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(self.pickerViewDoneAction))
+        doneButton.tintColor = UIColor.init(red: 11.0/255.0, green: 118.0/255.0, blue: 201.0/255.0, alpha: 1.0)
+        let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(self.pickerViewCancelAction))
+        cancelButton.tintColor = UIColor.init(red: 11.0/255.0, green: 118.0/255.0, blue: 201.0/255.0, alpha: 1.0)
+        toolBar.setItems([cancelButton, spaceButton, doneButton], animated: false)
+        toolBar.isUserInteractionEnabled = true
+        textField.inputAccessoryView = toolBar
+        
+        //Set Picker View to Textfield
+        textField.tintColor = UIColor.clear
+        textField.inputView = pickerView
+        pickerView.reloadAllComponents()
+        pickerView.selectRow(0, inComponent: 0, animated: false)
+    }
+    
+    @objc func pickerViewDoneAction() {
+        if pickerArray.count != 0 && !pickervalueChanged {
+            pickerDelegate?.didSelectPickerViewAtIndex?(index: 0)
+        }
+        pickerDelegate?.didClickOnPickerViewDoneButton?()
+        view.endEditing(true)
+    }
+    
+    @objc func pickerViewCancelAction() {
+        pickerDelegate?.didClickOnPickerViewCancelButton?()
+        view.endEditing(true)
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerArray.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return pickerArray[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        pickervalueChanged = true
+        if pickerArray.count == 0 {
+            return
+        }
+        pickerDelegate?.didSelectPickerViewAtIndex?(index: row)
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
+        return 36.0
+    }
+    
+    //MARK: Custom Date Picker
+    func setDatePicker(textField: UITextField, datePickerMode: UIDatePickerMode, maximunDate: Date?, minimumDate: Date?) {
+        if textField.text == "" {
+            datePickerView.setDate(Date(), animated: true)
+        } else {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MM-dd-yyyy"
+            let dateCur = dateFormatter.date(from: textField.text!)
+            
+            datePickerView.setDate(dateCur!, animated: true)
+        }
+        textField.inputView = datePickerView
+        pickerTextfield = textField
+      //  pickerTextfield.text = Date().stringFromDate(format: .mdyDate, type: .local)
+        datePickerView.datePickerMode = datePickerMode
+        datePickerView.timeZone = NSTimeZone.local
+        
+        datePickerView.backgroundColor = UIColor.lightGray
+        datePickerView.maximumDate = maximunDate
+        datePickerView.minimumDate = minimumDate
+        datePickerView.addTarget(self, action: #selector(self.didDatePickerViewValueChanged(sender:)), for: .valueChanged)
+    }
+    
+    @objc func datePickerDoneAction() {
+        pickerDelegate?.didClickOnDatePickerViewDoneButton?()
+        view.endEditing(true)
+    }
+    
+    @objc func didDatePickerViewValueChanged(sender: UIDatePicker) {
+        pickerTextfield.text = sender.date.stringFromDate(format: .mdyDate, type: .local)
+        pickerDelegate?.didSelectDatePicker?(date: sender.date)
+    }
+}
+
+//MARK: Alert Methods
+extension BaseViewController {
+    
+    func showAlert(title:String? = kAlert , message : String) {
+//        appDelegate.showToast(message: message)
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: kOkay, style: .default, handler: nil))
+        self.present(alert,animated: true)
+    }
+    
+    func showErrorMessage(error: NSError?) {
+            if error != nil {
+                appDelegate.showErrorToast(message: error!.userInfo[APIKeys.kMessage] as? String ?? kUnableRequestMsg)
+    //            let alert = UIAlertController(title: error!.domain, message: error!.userInfo[APIKeys.kMessage] as? String ?? kUnableRequestMsg, preferredStyle: .alert)
+    //            alert.addAction(UIAlertAction(title: kOkay, style: .cancel, handler: nil))
+    //            present(alert, animated: true, completion: nil)
+            } else {
+                appDelegate.showErrorToast(message: kUnableRequestMsg)
+    //            let alert = UIAlertController(title: kAlert, message: kUnableRequestMsg, preferredStyle: .alert)
+    //            alert.addAction(UIAlertAction(title: kOkay, style: .cancel, handler: nil))
+    //            present(alert, animated: true, completion: nil)
+            }
+        }
+    
+    func showAlert(title:String? = kAlert,message: String?, otherButtons:[String:((UIAlertAction)-> ())]? = nil, cancelTitle: String = kOkay, cancelAction: ((UIAlertAction)-> ())? = nil) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        if otherButtons != nil {
+            for key in otherButtons!.keys {
+                alert.addAction(UIAlertAction(title: key, style: .default, handler: otherButtons![key]))
+            }
+        }
+        alert.addAction(UIAlertAction(title: cancelTitle, style: .default, handler: cancelAction))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func showErrorMessage(error: NSError?, otherButtons:[String:((UIAlertAction)-> ())]? = nil, cancelTitle: String = kOkay, cancelAction: ((UIAlertAction)-> ())? = nil) {
+        if error != nil {
+            let alert = UIAlertController(title: error!.domain, message: error!.userInfo[APIKeys.kMessage] as? String ?? kUnableRequestMsg, preferredStyle: .alert)
+            if otherButtons != nil {
+                for key in otherButtons!.keys {
+                    alert.addAction(UIAlertAction(title: key, style: .default, handler: otherButtons![key]))
+                }
+            }
+            alert.addAction(UIAlertAction(title: cancelTitle, style: .default, handler: cancelAction))
+            present(alert, animated: true, completion: nil)
+        }
+        else {
+            let alert = UIAlertController(title: kAlert, message: kUnableRequestMsg, preferredStyle: .alert)
+            if otherButtons != nil {
+                for key in otherButtons!.keys {
+                    alert.addAction(UIAlertAction(title: key, style: .default, handler: otherButtons![key]))
+                }
+            }
+            alert.addAction(UIAlertAction(title: cancelTitle, style: .default, handler: cancelAction))
+            present(alert, animated: true, completion: nil)
+        }
+    }
+    
+}
+
+//MARK: UIPopoverControllerDelegate
+extension BaseViewController: UIPopoverPresentationControllerDelegate {
+    func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) {
+        self.view.endEditing(true)
+        self.recentTextField?.resignFirstResponder()
+        self.recentTextField = nil
+    }
+    
+    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.none
+    }
+    
+    func popoverPresentationControllerShouldDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) -> Bool {
+        return true
+    }
+}
+
+//MARK: Other Functions
+extension BaseViewController {
+    
+    func formattedZIPCodeNumber(number: String) -> String {
+        let cleanPhoneNumber = number.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+        //let mask = "+X (XXX) XXX-XXXX"
+        let mask = "XXXXX-XXXX"
+        
+        var result = ""
+        var index = cleanPhoneNumber.startIndex
+        for ch in mask where index < cleanPhoneNumber.endIndex {
+            if ch == "X" {
+                result.append(cleanPhoneNumber[index])
+                index = cleanPhoneNumber.index(after: index)
+            } else {
+                result.append(ch)
+            }
+        }
+        return result
+    }
+    
+    func formattedPhoneNumber(number: String) -> String {
+        let cleanPhoneNumber = number.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+        var mask = ""
+        if cleanPhoneNumber.count > 0 && cleanPhoneNumber.count < 8 {
+            mask = "XXX-XXXX"
+        } else if cleanPhoneNumber.count > 7 && cleanPhoneNumber.count < 11 {
+            mask = "(XXX) XXX-XXXX"
+        } else if cleanPhoneNumber.count > 10 {
+            mask = "X (XXX) XXX-XXXXX"
+        }
+        
+        //
+        
+        var result = ""
+        var index = cleanPhoneNumber.startIndex
+        for ch in mask where index < cleanPhoneNumber.endIndex {
+            if ch == "X" {
+                result.append(cleanPhoneNumber[index])
+                index = cleanPhoneNumber.index(after: index)
+            } else {
+                result.append(ch)
+            }
+        }
+        return result
+    }
+    
+    func phoneNumberFormateRemoveText(number: String) -> String {
+        var result = ""
+        
+        if number != "" {
+            result = number.replacingOccurrences(of: "[ |()-]", with: "", options: [.regularExpression])
+        }        
+        return result
+    }
+    
+    func formattedCreditCardNumber(number: String) -> String {
+        let cleanPhoneNumber = number.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+        //let mask = "+X (XXX) XXX-XXXX"
+        let mask = "XXXX-XXXX-XXXX-XXXX"
+        
+        var result = ""
+        var index = cleanPhoneNumber.startIndex
+        for ch in mask where index < cleanPhoneNumber.endIndex {
+            if ch == "X" {
+                result.append(cleanPhoneNumber[index])
+                index = cleanPhoneNumber.index(after: index)
+            } else {
+                result.append(ch)
+            }
+        }
+        return result
+    }
+    
+    func setRootViewControllerForIphone() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
+        let vc1 = storyboard.instantiateViewController(withIdentifier: "ProductsViewController") as! ProductsViewController
+        let vc2 = storyboard.instantiateViewController(withIdentifier: "CategoriesViewController") as! CategoriesViewController
+        let nav = UINavigationController(rootViewController: vc1)
+        nav.setNavigationBarHidden(true, animated: true)
+        
+        if !NetworkConnectivity.isConnectedToInternet() {
+            var navStackArray : [UIViewController] = nav.viewControllers
+            navStackArray.append(vc2)
+            nav.setViewControllers(navStackArray, animated:false)
+        }
+        
+        controller.setFront(nav, animated: true)
+        appDelegate.window?.rootViewController = controller
+        appDelegate.window?.makeKeyAndVisible()
+    }
+    
+    func setRootOrderHistoryViewControllerForIphone() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
+        let vc1 = storyboard.instantiateViewController(withIdentifier: "OrdersViewController") as! OrdersViewController
+        //let vc2 = storyboard.instantiateViewController(withIdentifier: "CategoriesViewController") as! CategoriesViewController
+        let nav = UINavigationController(rootViewController: vc1)
+        nav.setNavigationBarHidden(true, animated: true)
+        
+        
+        controller.setFront(nav, animated: true)
+        appDelegate.window?.rootViewController = controller
+        appDelegate.window?.makeKeyAndVisible()
+    }
+    
+    func showCustomTableView(_ viewController: UIViewController, sourceView: UITextField, countryName: String, callback: @escaping ((String) -> ())) {
+        sourceView.resignFirstResponder()
+        UIApplication.shared.keyWindow?.rootViewController?.view.endEditing(true)
+        
+        //Offline
+        if !NetworkConnectivity.isConnectedToInternet() && DataManager.isOffline {
+            //            self.showAlert(title: "Oops!", message: "\(countryName != "" ? "Regions" : "Countries") are not avalable in the offline mode!")
+            appDelegate.showToast(message:"\(countryName != "" ? "Regions" : "Countries") are not avalable in the offline mode!")
+            return
+        }
+        
+        //Country
+        if (HomeVM.shared.countryDetail.count == 0 && countryName == "" ) {
+            HomeVM.shared.getCountryList(country: "") { (success, message, error) in
+                if success == 1 {
+                    self.isCountrySelected = true
+                    self.recentTextField = sourceView
+                    self.onSelectionCallback = callback
+                    self.showCustomView(viewController, array: HomeVM.shared.countryDetail.compactMap({$0.name}), sourceView: sourceView)
+                }else {
+                    if !Indicator.isEnabledIndicator {
+                        return
+                    }
+                    if message != nil {
+//                        self.showAlert(message: message!)
+                        appDelegate.showToast(message: message!)
+                    }else {
+                        self.showErrorMessage(error: error)
+                    }
+                }
+            }
+            return
+        }
+        
+        //Region
+        if (HomeVM.shared.regionsList.count == 0 && countryName != "") || (self.recentTextField != sourceView && countryName != "") {
+            HomeVM.shared.isAllDataLoaded = [false, false, false]
+            HomeVM.shared.getRegionList(countryName: countryName, responseCallBack: { (success, message, error) in
+                if success == 1 {
+                    self.isCountrySelected = false
+                    self.recentTextField = sourceView
+                    self.onSelectionCallback = callback
+                    self.showCustomView(viewController, array: HomeVM.shared.regionsList.compactMap({$0.str_regionName}), sourceView: sourceView)
+                }else {
+                    if !Indicator.isEnabledIndicator {
+                        return
+                    }
+                    if message != nil {
+//                        self.showAlert(message: message!)
+                        appDelegate.showToast(message: message!)
+                    }else {
+                        self.showErrorMessage(error: error)
+                    }
+                }
+            })
+            return
+        }
+        //If Data Available
+        if countryName == "" {
+            //Country
+            self.isCountrySelected = true
+            self.recentTextField = sourceView
+            self.onSelectionCallback = callback
+            self.showCustomView(viewController, array: HomeVM.shared.countryDetail.compactMap({$0.name}), sourceView: sourceView)
+        }else {
+            //Region
+            self.isCountrySelected = false
+            self.recentTextField = sourceView
+            self.onSelectionCallback = callback
+            self.showCustomView(viewController, array: HomeVM.shared.regionsList.compactMap({$0.str_regionName}), sourceView: sourceView)
+        }
+    }
+    
+    func showCustomView(_ viewController: UIViewController, array: [String], sourceView: UITextField) {
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SelectCountryPopupVC") as! SelectCountryPopupVC
+        vc.modalPresentationStyle = UIModalPresentationStyle.popover
+        vc.preferredContentSize = CGSize(width: sourceView.bounds.width, height: 321)
+        vc.delegate = self
+        vc.nameArray = array
+        self.recentUIVIewController = vc
+        
+        let popController = vc.popoverPresentationController
+        popController!.permittedArrowDirections = .init(rawValue: 0)
+        popController!.backgroundColor = UIColor.white
+        popController!.delegate = self
+        popController!.sourceView = sourceView
+        popController!.sourceRect = CGRect(x: 0, y: sourceView.bounds.maxY , width: sourceView.bounds.width, height: 321)
+        viewController.present(vc, animated: true, completion: {
+            vc.view.superview?.layer.cornerRadius = 0
+            vc.view.superview?.borderColor = #colorLiteral(red: 0.8509055972, green: 0.8510283828, blue: 0.8508786559, alpha: 1)
+            vc.view.superview?.borderWidth = 1.0
+        })
+    }
+    
+}
+
+//MARK: SelectCountryPopupVCDelegate
+extension BaseViewController: SelectCountryPopupVCDelegate {
+    func didSelectValue(string: String, index: Int) {
+        self.recentTextField?.resignFirstResponder()
+        self.recentTextField = nil
+        
+        if isCountrySelected {
+            let array = HomeVM.shared.countryDetail.compactMap({$0.abbreviation})
+            self.onSelectionCallback?(array[index])
+            HomeVM.shared.regionsList.removeAll()
+            return
+        }
+        //Region
+        let array = HomeVM.shared.regionsList.compactMap({$0.str_regionAbv})
+        self.onSelectionCallback?(array[index])
+    }
+}

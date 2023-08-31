@@ -1,0 +1,23 @@
+//
+//  iPadProductCollectionCell.swift
+//  HieCOR
+//
+//  Created by Deftsoft on 23/10/18.
+//  Copyright © 2018 HyperMacMini. All rights reserved.
+//
+
+import UIKit
+
+class iPadProductCollectionCell: UICollectionViewCell {
+    //MARK: IBOutlet
+    @IBOutlet weak var productCode: UILabel!
+    @IBOutlet var productImage: UIImageView!
+    @IBOutlet var productTitle: UILabel!
+    @IBOutlet var productPrice: UILabel!
+    @IBOutlet var editButton: UIButton!
+    @IBOutlet var backView: UIView!
+    @IBOutlet var labelOutOfStock: UILabel!
+    //@IBOutlet var outOfStockView: UIView!
+
+    @IBOutlet weak var imgOutOfStock: UIImageView!
+}

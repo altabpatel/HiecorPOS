@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18D109" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Category" representedClassName="Category" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Customer" representedClassName="Customer" syncable="YES" codeGenerationType="class">
+        <attribute name="address1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="address2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billingAddress1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billingAddress2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billingCity" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billingCompany" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billingEmail" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billingFirstName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billingLastName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billingPhone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billingPostalCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billingRegion" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bpId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cardMonth" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cardNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cardType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cardYear" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="displayName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="orderId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="postalCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="region" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shippingAddress1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shippingAddress2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shippingCity" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shippingEmail" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shippingFirstName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shippingLastName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shippingPhone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shippingPostalCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shippingRegion" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userCoupan" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userCustomTax" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Orders" representedClassName="Orders" syncable="YES" codeGenerationType="class">
+        <attribute name="data" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="date" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="index" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isInvoice" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="total" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Product" representedClassName="Product" syncable="YES" codeGenerationType="class">
+        <attribute name="attributesArrayData" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="category" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="externalProductId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fileId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="image" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="is_taxable" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="keywords" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="limitQty" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="longDescp" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="price" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="productCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shippingPrice" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shortDescp" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stock" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unlimitedStock" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Region" representedClassName="Region" syncable="YES" codeGenerationType="class">
+        <attribute name="abbreviation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Tax" representedClassName="Tax" syncable="YES" codeGenerationType="class">
+        <attribute name="amount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="settings" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Category" positionX="-63" positionY="-18" width="128" height="60"/>
+        <element name="Customer" positionX="0" positionY="171" width="128" height="615"/>
+        <element name="Orders" positionX="-27" positionY="135" width="128" height="120"/>
+        <element name="Product" positionX="-18" positionY="54" width="128" height="300"/>
+        <element name="Region" positionX="-36" positionY="36" width="128" height="75"/>
+        <element name="Tax" positionX="-54" positionY="0" width="128" height="105"/>
+    </elements>
+</model>
